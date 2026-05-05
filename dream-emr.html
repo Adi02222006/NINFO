@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaCare EMR — The Informatics Innovators</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070c18;
+    --surface: #0f1626;
+    --card: #141e30;
+    --card2: #1a2540;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(0,210,170,0.25);
+    --teal: #00d4aa;
+    --teal-dim: rgba(0,212,170,0.12);
+    --teal-glow: rgba(0,212,170,0.35);
+    --blue: #4f9cf9;
+    --blue-dim: rgba(79,156,249,0.12);
+    --rose: #ff6b8a;
+    --rose-dim: rgba(255,107,138,0.12);
+    --amber: #fbbf24;
+    --amber-dim: rgba(251,191,36,0.12);
+    --green: #34d399;
+    --green-dim: rgba(52,211,153,0.12);
+    --text: #e2eaf4;
+    --text-muted: #6b7a99;
+    --text-dim: #9aabcc;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── HEADER ─────────────────────────────────── */
+  header {
+    background: rgba(10,14,24,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 20px var(--teal-glow);
+  }
+
+  .logo-text {
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text span { color: var(--teal); }
+
+  .header-divider { width: 1px; height: 28px; background: var(--border); }
+
+  .shift-badge {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .shift-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:0.6; transform:scale(0.8); }
+  }
+
+  .header-spacer { flex: 1; }
+
+  .header-clock {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--teal);
+    letter-spacing: 1px;
+  }
+
+  .burnout-widget {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .burnout-widget:hover { border-color: var(--amber); }
+
+  .burnout-widget .label {
+    font-size: 11px; color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .burnout-bar-wrap {
+    width: 60px; height: 5px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px; overflow: hidden;
+  }
+
+  .burnout-bar {
+    height: 100%; width: 62%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--green), var(--amber));
+    transition: width 1s ease;
+  }
+
+  .nurse-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    border: 2px solid var(--border2);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* ─── LAYOUT ──────────────────────────────────── */
+  .app-layout {
+    display: flex;
+    height: calc(100vh - 62px);
+    overflow: hidden;
+  }
+
+  /* ─── SIDEBAR ─────────────────────────────────── */
+  .sidebar {
+    width: 230px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 16px 0;
+    overflow-y: auto;
+  }
+
+  .sidebar-section {
+    padding: 0 12px;
+    margin-bottom: 8px;
+  }
+
+  .sidebar-label {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 4px 8px 8px;
+  }
+
+  .nav-btn {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%; padding: 9px 12px;
+    border: none; background: transparent;
+    color: var(--text-dim); cursor: pointer;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 500;
+    transition: all 0.15s;
+    text-align: left;
+    position: relative;
+  }
+
+  .nav-btn:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+
+  .nav-btn.active {
+    background: var(--teal-dim);
+    color: var(--teal);
+    border: 1px solid var(--border2);
+  }
+
+  .nav-btn .icon { width: 18px; text-align: center; flex-shrink: 0; }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--rose);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .patient-list {
+    padding: 0 12px;
+    margin-top: 4px;
+  }
+
+  .patient-card-mini {
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--card);
+  }
+
+  .patient-card-mini:hover { border-color: var(--teal-glow); }
+  .patient-card-mini.selected { border-color: var(--teal); background: var(--teal-dim); }
+
+  .pcm-name {
+    font-size: 12px; font-weight: 600; color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .pcm-meta {
+    font-size: 11px; color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .pcm-status {
+    display: inline-block;
+    width: 6px; height: 6px; border-radius: 50%;
+    margin-right: 4px;
+  }
+
+  /* ─── MAIN CONTENT ────────────────────────────── */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--bg);
+    padding: 24px;
+  }
+
+  /* ─── TAB CONTENT ─────────────────────────────── */
+  .tab-content { display: none; animation: fadeSlide 0.3s ease; }
+  .tab-content.active { display: block; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── PAGE HEADER ─────────────────────────────── */
+  .page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .page-title {
+    font-family: var(--font-head);
+    font-size: 22px; font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .page-title span { color: var(--teal); }
+
+  .page-sub {
+    font-size: 12px; color: var(--text-muted);
+    font-family: var(--font-mono);
+    margin-top: 2px;
+  }
+
+  /* ─── CARDS ──────────────────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-family: var(--font-head);
+    font-size: 13px; font-weight: 700;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .card-title::before {
+    content: '';
+    width: 3px; height: 14px;
+    background: var(--teal);
+    border-radius: 2px;
+  }
+
+  /* ─── GRID ───────────────────────────────────── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+
+  /* ─── STAT TILES ─────────────────────────────── */
+  .stat-tile {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: flex; align-items: center; gap: 14px;
+    transition: all 0.2s;
+  }
+
+  .stat-tile:hover { border-color: var(--teal-glow); transform: translateY(-1px); }
+
+  .stat-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+
+  .stat-icon.teal { background: var(--teal-dim); }
+  .stat-icon.blue { background: var(--blue-dim); }
+  .stat-icon.rose { background: var(--rose-dim); }
+  .stat-icon.amber { background: var(--amber-dim); }
+  .stat-icon.green { background: var(--green-dim); }
+
+  .stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+  .stat-value { font-family: var(--font-mono); font-size: 20px; font-weight: 500; color: var(--text); }
+  .stat-unit { font-size: 11px; color: var(--text-muted); margin-left: 3px; }
+
+  .stat-trend {
+    font-size: 11px; margin-top: 2px;
+    font-family: var(--font-mono);
+  }
+
+  .trend-up { color: var(--rose); }
+  .trend-ok { color: var(--green); }
+  .trend-warn { color: var(--amber); }
+
+  /* ─── TAGS / BADGES ──────────────────────────── */
+  .tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+    font-family: var(--font-mono);
+  }
+
+  .tag-rose { background: var(--rose-dim); color: var(--rose); border: 1px solid rgba(255,107,138,0.3); }
+  .tag-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(251,191,36,0.3); }
+  .tag-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(52,211,153,0.3); }
+  .tag-teal { background: var(--teal-dim); color: var(--teal); border: 1px solid var(--border2); }
+  .tag-blue { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(79,156,249,0.3); }
+
+  /* ─── TABLE ──────────────────────────────────── */
+  table { width: 100%; border-collapse: collapse; }
+
+  th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 11px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px;
+    color: var(--text);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ─── INPUTS ─────────────────────────────────── */
+  input[type="text"], input[type="number"], input[type="time"], select, textarea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13px;
+    padding: 8px 12px;
+    outline: none;
+    transition: border 0.2s;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px var(--teal-dim);
+  }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; display: block; }
+
+  .form-group { margin-bottom: 12px; }
+
+  /* ─── BUTTONS ─────────────────────────────────── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none; transition: all 0.15s;
+  }
+
+  .btn-primary {
+    background: var(--teal); color: #070c18;
+    box-shadow: 0 0 20px var(--teal-glow);
+  }
+
+  .btn-primary:hover { background: #00ead0; transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: var(--card2); color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover { border-color: var(--teal-glow); color: var(--teal); }
+
+  .btn-danger {
+    background: var(--rose-dim); color: var(--rose);
+    border: 1px solid rgba(255,107,138,0.3);
+  }
+
+  .btn-danger:hover { background: rgba(255,107,138,0.2); }
+
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+  /* ─── CHECKBOX CUSTOM ─────────────────────────── */
+  .checkbox-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 0;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .checkbox-row input[type="checkbox"] {
+    width: 16px; height: 16px;
+    accent-color: var(--teal);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .checkbox-row.checked { color: var(--text-muted); text-decoration: line-through; }
+
+  /* ─── MAR STATUS ─────────────────────────────── */
+  .mar-cell {
+    width: 32px; height: 32px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; cursor: pointer;
+    border: 1px solid var(--border);
+    transition: all 0.15s;
+    background: var(--surface);
+  }
+
+  .mar-cell:hover { border-color: var(--teal-glow); }
+  .mar-cell.given { background: var(--green-dim); border-color: rgba(52,211,153,0.4); }
+  .mar-cell.held { background: var(--amber-dim); border-color: rgba(251,191,36,0.4); }
+  .mar-cell.due { background: var(--blue-dim); border-color: rgba(79,156,249,0.4); animation: blink 2s infinite; }
+
+  @keyframes blink {
+    0%,100%{ border-color: rgba(79,156,249,0.4); }
+    50%{ border-color: var(--blue); box-shadow: 0 0 8px rgba(79,156,249,0.4); }
+  }
+
+  /* ─── VITALS CHART ────────────────────────────── */
+  .vitals-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .vital-input-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .vital-input-card:hover { border-color: var(--teal-glow); }
+  .vital-input-card .vname { font-size: 10px; color: var(--text-muted); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing:1px; }
+  .vital-input-card input { text-align: center; font-family: var(--font-mono); font-size: 18px; font-weight: 500; border: none; background: transparent; color: var(--teal); width: 100%; }
+  .vital-input-card .vunit { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+  .vital-input-card.abnormal { border-color: rgba(255,107,138,0.4); background: var(--rose-dim); }
+  .vital-input-card.abnormal input { color: var(--rose); }
+
+  /* ─── AI SCRIBE ───────────────────────────────── */
+  .scribe-hero {
+    background: linear-gradient(135deg, rgba(0,212,170,0.05) 0%, rgba(79,156,249,0.05) 100%);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scribe-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(0,212,170,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .record-btn {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--teal);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+    margin: 0 auto 16px;
+    box-shadow: 0 0 30px var(--teal-glow);
+    transition: all 0.2s;
+    position: relative;
+    z-index: 1;
+  }
+
+  .record-btn:hover { transform: scale(1.05); box-shadow: 0 0 50px var(--teal-glow); }
+  .record-btn.recording {
+    background: var(--rose);
+    box-shadow: 0 0 30px rgba(255,107,138,0.5);
+    animation: recordPulse 1s infinite;
+  }
+
+  @keyframes recordPulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  .record-btn.recording::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,107,138,0.4);
+    animation: ripple 1s infinite;
+  }
+
+  .record-btn.recording::after {
+    content: '';
+    position: absolute;
+    inset: -18px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,107,138,0.2);
+    animation: ripple 1s 0.3s infinite;
+  }
+
+  @keyframes ripple {
+    0% { transform: scale(1); opacity:1; }
+    100% { transform: scale(1.3); opacity:0; }
+  }
+
+  .scribe-status {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .scribe-status.active { color: var(--rose); }
+
+  .transcription-area {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text);
+    min-height: 100px;
+    line-height: 1.7;
+    text-align: left;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .typed-cursor {
+    display: inline-block;
+    width: 2px; height: 14px;
+    background: var(--teal);
+    animation: blink-cursor 0.7s infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+
+  @keyframes blink-cursor {
+    0%,100% { opacity:1; }
+    50% { opacity:0; }
+  }
+
+  .ai-parsed-card {
+    background: var(--green-dim);
+    border: 1px solid rgba(52,211,153,0.3);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-top: 12px;
+    font-size: 13px;
+  }
+
+  .ai-parsed-card .ai-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+
+  .ai-field { display: flex; gap: 8px; margin-bottom: 4px; font-size: 13px; }
+  .ai-field .key { color: var(--text-muted); min-width: 120px; font-family: var(--font-mono); font-size: 12px; }
+  .ai-field .val { color: var(--text); }
+
+  /* ─── CARE PLAN ───────────────────────────────── */
+  .nanda-card {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 3px solid var(--blue);
+  }
+
+  .nanda-card.priority-high { border-left-color: var(--rose); }
+  .nanda-card.priority-medium { border-left-color: var(--amber); }
+  .nanda-card.priority-low { border-left-color: var(--teal); }
+
+  .nanda-dx { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .nanda-related { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+
+  .intervention-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .intervention-list li {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 4px 0;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .intervention-list li::before {
+    content: '›';
+    color: var(--teal);
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ─── PROGRESS ───────────────────────────────── */
+  .progress-bar {
+    width: 100%; height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px; overflow: hidden;
+    margin-top: 6px;
+  }
+
+  .progress-fill {
+    height: 100%; border-radius: 3px;
+    transition: width 1s ease;
+  }
+
+  /* ─── NOTIFICATION TOAST ─────────────────────── */
+  .toast-container {
+    position: fixed; top: 76px; right: 20px;
+    z-index: 200; display: flex; flex-direction: column; gap: 8px;
+  }
+
+  .toast {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 13px;
+    max-width: 300px;
+    animation: toastIn 0.3s ease;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+
+  .toast.toast-success { border-left: 3px solid var(--green); }
+  .toast.toast-warn { border-left: 3px solid var(--amber); }
+  .toast.toast-info { border-left: 3px solid var(--teal); }
+
+  @keyframes toastIn {
+    from { opacity:0; transform: translateX(20px); }
+    to { opacity:1; transform: translateX(0); }
+  }
+
+  .toast-title { font-weight: 600; margin-bottom: 2px; }
+  .toast-body { color: var(--text-muted); font-size: 12px; }
+
+  /* ─── MISC ────────────────────────────────────── */
+  .divider {
+    border: none; border-top: 1px solid var(--border);
+    margin: 16px 0;
+  }
+
+  .text-muted { color: var(--text-muted); }
+  .text-teal { color: var(--teal); }
+  .text-rose { color: var(--rose); }
+  .text-green { color: var(--green); }
+  .text-amber { color: var(--amber); }
+
+  .mono { font-family: var(--font-mono); }
+
+  .flex { display:flex; align-items:center; }
+  .flex-between { display:flex; align-items:center; justify-content:space-between; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-16 { margin-bottom: 16px; }
+
+  .info-row {
+    display: flex; gap: 6px; align-items: flex-start;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 13px;
+  }
+
+  .info-row .key { color: var(--text-muted); min-width: 130px; font-size: 12px; flex-shrink:0; }
+  .info-row .val { color: var(--text); }
+
+  /* ─── SCROLLBAR ──────────────────────────────── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+  /* ─── ASSESSMENT GRID ────────────────────────── */
+  .assessment-section {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+
+  .assessment-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+
+  .assessment-header:hover { background: var(--card); }
+  .assessment-header .chevron { transition: transform 0.2s; font-size: 11px; color: var(--text-muted); }
+  .assessment-header.open .chevron { transform: rotate(90deg); }
+
+  .assessment-body {
+    padding: 12px 14px;
+    display: none;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+  }
+
+  .assessment-body.open { display: block; }
+
+  /* ─── BURNOUT MODAL ──────────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 300;
+    display: none; align-items: center; justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 32px;
+    width: 400px;
+    animation: modalIn 0.3s ease;
+    text-align: center;
+  }
+
+  @keyframes modalIn {
+    from { opacity:0; transform: scale(0.92) translateY(20px); }
+    to { opacity:1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-icon { font-size: 48px; margin-bottom: 16px; }
+  .modal-title { font-family: var(--font-head); font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .modal-body { color: var(--text-muted); font-size: 13px; line-height: 1.6; margin-bottom: 24px; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+    .vitals-grid { grid-template-columns: repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─────────────────────────────────────── -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚕</div>
+    <div class="logo-text">Nova<span>Care</span></div>
+  </div>
+  <div class="header-divider"></div>
+  <div class="shift-badge">
+    <div class="shift-dot"></div>
+    Day Shift · Floor 4B
+  </div>
+  <div class="header-spacer"></div>
+  <div class="header-clock" id="clock">--:--:--</div>
+  <div class="header-divider"></div>
+  <div class="burnout-widget" onclick="openBurnout()">
+    <span class="label">⚡ Workload</span>
+    <div class="burnout-bar-wrap"><div class="burnout-bar" id="burnoutBar"></div></div>
+    <span class="label" id="burnoutPct">62%</span>
+  </div>
+  <div class="nurse-avatar" title="RN: J. Santos">JS</div>
+</header>
+
+<!-- ─── LAYOUT ──────────────────────────────────────── -->
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <button class="nav-btn active" onclick="showTab('dashboard', this)">
+        <span class="icon">🏠</span> Patient Dashboard
+      </button>
+      <button class="nav-btn" onclick="showTab('flowsheet', this)">
+        <span class="icon">📊</span> Flowsheets
+      </button>
+      <button class="nav-btn" onclick="showTab('mar', this)">
+        <span class="icon">💊</span> MAR
+        <span class="nav-badge">2</span>
+      </button>
+      <button class="nav-btn" onclick="showTab('careplan', this)">
+        <span class="icon">📋</span> Care Plan
+      </button>
+      <button class="nav-btn" onclick="showTab('scribe', this)">
+        <span class="icon">🎙️</span> AI Scribe
+        <span class="tag tag-teal" style="padding:1px 6px;font-size:9px;margin-left:auto;">NEW</span>
+      </button>
+    </div>
+    <hr class="divider" style="margin:8px 16px;">
+    <div class="sidebar-section">
+      <div class="sidebar-label">My Patients</div>
+    </div>
+    <div class="patient-list">
+      <div class="patient-card-mini selected" onclick="selectPatient(this,'Maria Santos','F · 45 · Rm 401','Chest Pain')">
+        <div class="pcm-name">Santos, Maria</div>
+        <div class="pcm-meta"><span class="pcm-status" style="background:var(--rose)"></span>Rm 401 · Chest Pain</div>
+      </div>
+      <div class="patient-card-mini" onclick="selectPatient(this,'James Reyes','M · 67 · Rm 403','COPD Exacerbation')">
+        <div class="pcm-name">Reyes, James</div>
+        <div class="pcm-meta"><span class="pcm-status" style="background:var(--amber)"></span>Rm 403 · COPD</div>
+      </div>
+      <div class="patient-card-mini" onclick="selectPatient(this,'Anna Cruz','F · 32 · Rm 405','Post-op Appendectomy')">
+        <div class="pcm-name">Cruz, Anna</div>
+        <div class="pcm-meta"><span class="pcm-status" style="background:var(--green)"></span>Rm 405 · Post-op</div>
+      </div>
+      <div class="patient-card-mini" onclick="selectPatient(this,'Carlos Lim','M · 58 · Rm 407','DKA')">
+        <div class="pcm-name">Lim, Carlos</div>
+        <div class="pcm-meta"><span class="pcm-status" style="background:var(--amber)"></span>Rm 407 · DKA</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ═══════════ DASHBOARD ═══════════ -->
+    <div id="tab-dashboard" class="tab-content active">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Patient <span>Dashboard</span></div>
+          <div class="page-sub">Santos, Maria A. · MRN: 4B-20241023 · Admitted: 05 May 2026</div>
+        </div>
+        <div class="flex gap-8">
+          <button class="btn btn-secondary btn-sm">📤 Export</button>
+          <button class="btn btn-primary btn-sm" onclick="showToast('Chart saved!','Auto-saved to server.','success')">💾 Save Chart</button>
+        </div>
+      </div>
+
+      <!-- VITALS QUICK VIEW -->
+      <div class="grid-4 mb-16">
+        <div class="stat-tile">
+          <div class="stat-icon rose">❤️</div>
+          <div>
+            <div class="stat-label">Heart Rate</div>
+            <div class="stat-value">102 <span class="stat-unit">bpm</span></div>
+            <div class="stat-trend trend-up">▲ Elevated</div>
+          </div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-icon blue">🩺</div>
+          <div>
+            <div class="stat-label">Blood Pressure</div>
+            <div class="stat-value">148<span class="stat-unit">/92</span></div>
+            <div class="stat-trend trend-warn">⚠ Hypertensive</div>
+          </div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-icon teal">🌡️</div>
+          <div>
+            <div class="stat-label">Temperature</div>
+            <div class="stat-value">37.1 <span class="stat-unit">°C</span></div>
+            <div class="stat-trend trend-ok">✓ Normal</div>
+          </div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-icon amber">💨</div>
+          <div>
+            <div class="stat-label">SpO₂</div>
+            <div class="stat-value">97 <span class="stat-unit">%</span></div>
+            <div class="stat-trend trend-ok">✓ Adequate</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- DEMOGRAPHICS -->
+        <div class="card">
+          <div class="card-title">Demographics</div>
+          <div class="info-row"><span class="key">Full Name</span><span class="val">Maria A. Santos</span></div>
+          <div class="info-row"><span class="key">Date of Birth</span><span class="val">March 14, 1981 (Age 45)</span></div>
+          <div class="info-row"><span class="key">Sex</span><span class="val">Female</span></div>
+          <div class="info-row"><span class="key">Room / Bed</span><span class="val">401-A · Floor 4B</span></div>
+          <div class="info-row"><span class="key">Attending MD</span><span class="val">Dr. R. Villanueva, MD</span></div>
+          <div class="info-row"><span class="key">Code Status</span><span class="val"><span class="tag tag-green">Full Code</span></span></div>
+          <div class="info-row"><span class="key">Insurance</span><span class="val">PhilHealth + HMO</span></div>
+          <div class="info-row"><span class="key">Emergency Contact</span><span class="val">Juan Santos (Husband) · 0917-555-1234</span></div>
+        </div>
+
+        <!-- ALLERGIES + CHIEF COMPLAINT -->
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">⚠ Allergies</div>
+            <div class="flex gap-8 mb-8" style="flex-wrap:wrap;">
+              <span class="tag tag-rose">🚨 Penicillin — Anaphylaxis</span>
+              <span class="tag tag-amber">⚠ Aspirin — GI Upset</span>
+              <span class="tag tag-amber">⚠ Sulfa Drugs — Rash</span>
+              <span class="tag tag-teal">Latex — Contact Dermatitis</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-muted)">Always verify before administering any medication. Last verified: Today 07:00</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">📌 Chief Complaint & History</div>
+            <div class="info-row"><span class="key">Chief Complaint</span><span class="val">Chest pain, sharp, onset 2 hrs prior</span></div>
+            <div class="info-row"><span class="key">Pain Scale</span><span class="val">7/10 — substernal, radiating to L arm</span></div>
+            <div class="info-row"><span class="key">Medical Hx</span><span class="val">HTN, T2DM, Hyperlipidemia</span></div>
+            <div class="info-row"><span class="key">Surgical Hx</span><span class="val">C-section × 2 (2010, 2013)</span></div>
+            <div class="info-row"><span class="key">Admitting Dx</span><span class="val"><span class="tag tag-rose">Rule-Out ACS</span></span></div>
+            <div style="margin-top:10px;">
+              <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Nurse Admission Note</div>
+              <textarea style="height:60px;font-size:12px;" placeholder="Add nursing admission note...">Pt. alert & oriented ×3. Arrived via wheelchair, diaphoretic, c/o chest tightness. 12-lead ECG obtained. IV access × 2 established. MD notified.</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ FLOWSHEET ═══════════ -->
+    <div id="tab-flowsheet" class="tab-content">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Flow<span>sheets</span></div>
+          <div class="page-sub">Vital Signs & Head-to-Toe Assessment · Santos, Maria</div>
+        </div>
+        <div class="flex gap-8">
+          <input type="time" style="width:120px" id="vsTime">
+          <button class="btn btn-primary btn-sm" onclick="saveVitals()">📥 Record Vitals</button>
+        </div>
+      </div>
+
+      <!-- VITALS INPUT -->
+      <div class="card">
+        <div class="card-title">📈 Vital Signs Entry</div>
+        <div class="vitals-grid">
+          <div class="vital-input-card abnormal" id="vc-hr">
+            <div class="vname">Heart Rate</div>
+            <input type="number" id="v-hr" value="102" onchange="checkVital(this,'hr')">
+            <div class="vunit">bpm &nbsp;(60–100)</div>
+          </div>
+          <div class="vital-input-card abnormal" id="vc-sbp">
+            <div class="vname">Systolic BP</div>
+            <input type="number" id="v-sbp" value="148" onchange="checkVital(this,'sbp')">
+            <div class="vunit">mmHg &nbsp;(90–120)</div>
+          </div>
+          <div class="vital-input-card" id="vc-dbp">
+            <div class="vname">Diastolic BP</div>
+            <input type="number" id="v-dbp" value="92" onchange="checkVital(this,'dbp')">
+            <div class="vunit">mmHg &nbsp;(60–80)</div>
+          </div>
+          <div class="vital-input-card" id="vc-temp">
+            <div class="vname">Temp (°C)</div>
+            <input type="number" id="v-temp" value="37.1" step="0.1" onchange="checkVital(this,'temp')">
+            <div class="vunit">°C &nbsp;(36.1–37.2)</div>
+          </div>
+          <div class="vital-input-card" id="vc-spo2">
+            <div class="vname">SpO₂</div>
+            <input type="number" id="v-spo2" value="97" onchange="checkVital(this,'spo2')">
+            <div class="vunit">% &nbsp;(≥95%)</div>
+          </div>
+          <div class="vital-input-card" id="vc-rr">
+            <div class="vname">Resp. Rate</div>
+            <input type="number" id="v-rr" value="18">
+            <div class="vunit">br/min &nbsp;(12–20)</div>
+          </div>
+          <div class="vital-input-card" id="vc-pain">
+            <div class="vname">Pain Score</div>
+            <input type="number" id="v-pain" value="7" min="0" max="10">
+            <div class="vunit">0–10 scale</div>
+          </div>
+          <div class="vital-input-card" id="vc-gcs">
+            <div class="vname">GCS</div>
+            <input type="number" id="v-gcs" value="15" min="3" max="15">
+            <div class="vunit">3–15 (E4V5M6)</div>
+          </div>
+          <div class="vital-input-card" id="vc-sug">
+            <div class="vname">Blood Sugar</div>
+            <input type="number" id="v-sug" value="188" onchange="checkVital(this,'sug')">
+            <div class="vunit">mg/dL &nbsp;(70–140)</div>
+          </div>
+        </div>
+
+        <!-- Vitals History Table -->
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-family:var(--font-mono)">RECORDED VITALS TODAY</div>
+        <table id="vitalsTable">
+          <thead>
+            <tr>
+              <th>Time</th><th>HR</th><th>BP</th><th>Temp</th><th>SpO₂</th><th>RR</th><th>Pain</th><th>GCS</th><th>BGL</th><th>Nurse</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">07:00</td><td><span class="tag tag-rose">108</span></td><td>152/94</td><td>37.3</td><td>96%</td><td>20</td><td>8</td><td>15</td><td>204</td><td>JS</td>
+            </tr>
+            <tr>
+              <td class="mono">09:00</td><td><span class="tag tag-rose">102</span></td><td>148/92</td><td>37.1</td><td>97%</td><td>18</td><td>7</td><td>15</td><td>188</td><td>JS</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- HEAD-TO-TOE -->
+      <div class="card">
+        <div class="card-title">🩻 Head-to-Toe Assessment</div>
+
+        <div class="assessment-section">
+          <div class="assessment-header" onclick="toggleAssess(this)">
+            <span>🧠 Neurological</span><span class="chevron">▶</span>
+          </div>
+          <div class="assessment-body">
+            <div class="grid-2">
+              <div>
+                <label>Level of Consciousness</label>
+                <select><option>Alert & Oriented ×3</option><option>Alert & Oriented ×2</option><option>Confused</option><option>Lethargic</option><option>Unresponsive</option></select>
+              </div>
+              <div>
+                <label>Pupils</label>
+                <select><option>PERRL – 3mm</option><option>PERRL – 4mm</option><option>Unequal</option><option>Non-reactive</option></select>
+              </div>
+            </div>
+            <div class="mt-8" style="margin-top:10px">
+              <label>Additional Notes</label>
+              <textarea>Patient A&O ×3, follows commands, speech clear. No focal neurological deficits noted.</textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="assessment-section">
+          <div class="assessment-header open" onclick="toggleAssess(this)">
+            <span>❤️ Cardiovascular</span><span class="chevron">▶</span>
+          </div>
+          <div class="assessment-body open">
+            <div class="grid-2 mb-12">
+              <div>
+                <label>Heart Sounds</label>
+                <select><option>S1/S2 Regular</option><option>S1/S2 Irregular</option><option>Murmur present</option><option>S3/S4 Gallop</option></select>
+              </div>
+              <div>
+                <label>Peripheral Pulses</label>
+                <select><option>2+ Bilateral</option><option>1+ Bilateral</option><option>Diminished</option><option>Absent</option></select>
+              </div>
+            </div>
+            <div>
+              <label>Findings</label>
+              <div class="checkbox-row"><input type="checkbox" checked> Tachycardia noted</div>
+              <div class="checkbox-row"><input type="checkbox" checked> Diaphoresis</div>
+              <div class="checkbox-row"><input type="checkbox"> Edema (bilateral)</div>
+              <div class="checkbox-row"><input type="checkbox"> JVD noted</div>
+              <div class="checkbox-row"><input type="checkbox"> Capillary refill >2s</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="assessment-section">
+          <div class="assessment-header" onclick="toggleAssess(this)">
+            <span>🫁 Respiratory</span><span class="chevron">▶</span>
+          </div>
+          <div class="assessment-body">
+            <div class="grid-2 mb-12">
+              <div>
+                <label>Breath Sounds</label>
+                <select><option>Clear Bilaterally</option><option>Crackles (Bilateral)</option><option>Wheezes</option><option>Decreased</option></select>
+              </div>
+              <div>
+                <label>O₂ Therapy</label>
+                <select><option>Room Air</option><option>2L NC</option><option>4L NC</option><option>Simple Mask</option><option>NRB Mask</option></select>
+              </div>
+            </div>
+            <label>Notes</label>
+            <textarea>Lung sounds clear bilaterally. No use of accessory muscles. No signs of respiratory distress. SpO2 maintained on room air.</textarea>
+          </div>
+        </div>
+
+        <div class="assessment-section">
+          <div class="assessment-header" onclick="toggleAssess(this)">
+            <span>🍽️ GI / GU</span><span class="chevron">▶</span>
+          </div>
+          <div class="assessment-body">
+            <div class="grid-2 mb-12">
+              <div>
+                <label>Bowel Sounds</label>
+                <select><option>Normoactive ×4</option><option>Hypoactive</option><option>Hyperactive</option><option>Absent</option></select>
+              </div>
+              <div>
+                <label>Last Void</label>
+                <input type="time" value="08:30">
+              </div>
+            </div>
+            <label>Fluid Balance (mL)</label>
+            <div class="grid-2">
+              <div>
+                <label style="color:var(--green)">Intake (I)</label>
+                <input type="number" value="750" placeholder="mL">
+              </div>
+              <div>
+                <label style="color:var(--rose)">Output (O)</label>
+                <input type="number" value="450" placeholder="mL">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="assessment-section">
+          <div class="assessment-header" onclick="toggleAssess(this)">
+            <span>🦷 Integumentary / Skin</span><span class="chevron">▶</span>
+          </div>
+          <div class="assessment-body">
+            <div class="grid-2 mb-12">
+              <div>
+                <label>Skin Color</label>
+                <select><option>Normal / Warm</option><option>Pale</option><option>Flushed</option><option>Cyanotic</option><option>Jaundiced</option></select>
+              </div>
+              <div>
+                <label>Turgor</label>
+                <select><option>Elastic (Normal)</option><option>Decreased Turgor</option><option>Tenting</option></select>
+              </div>
+            </div>
+            <label>Wound / IV Site Assessment</label>
+            <div class="checkbox-row"><input type="checkbox" checked> PIV site intact, no phlebitis (R antecubital)</div>
+            <div class="checkbox-row"><input type="checkbox" checked> PIV site intact (L forearm)</div>
+            <div class="checkbox-row"><input type="checkbox"> Pressure injury present</div>
+            <div class="checkbox-row"><input type="checkbox"> Surgical wound site checked</div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px; display:flex; gap:8px; justify-content:flex-end;">
+          <button class="btn btn-secondary btn-sm">🔄 Reset Assessment</button>
+          <button class="btn btn-primary btn-sm" onclick="showToast('Assessment Saved','Head-to-toe documentation recorded.','success')">✅ Save Assessment</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ MAR ═══════════ -->
+    <div id="tab-mar" class="tab-content">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Medication <span>Administration Record</span></div>
+          <div class="page-sub">Santos, Maria · ⚠ Allergic: Penicillin, Aspirin, Sulfa Drugs, Latex</div>
+        </div>
+        <div class="flex gap-8">
+          <button class="btn btn-secondary btn-sm">🖨️ Print MAR</button>
+          <button class="btn btn-primary btn-sm" onclick="showToast('MAR Reconciled','All medications reconciled.','success')">🔁 Reconcile</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="flex-between mb-16">
+          <div class="card-title" style="margin-bottom:0">💊 Scheduled Medications</div>
+          <div class="flex gap-8">
+            <span class="tag tag-green">✓ Given</span>
+            <span class="tag tag-amber">⏸ Held</span>
+            <span class="tag tag-blue">🕐 Due</span>
+            <span class="tag" style="background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border);">— Not Due</span>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Medication</th><th>Dose / Route</th><th>Frequency</th><th>Indication</th><th>06:00</th><th>08:00</th><th>12:00</th><th>14:00</th><th>18:00</th><th>22:00</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Atenolol</strong><br><span class="text-muted" style="font-size:11px">Beta-blocker</span></td>
+              <td>50 mg PO</td><td>Once Daily</td><td>HTN / Tachycardia</td>
+              <td><div class="mar-cell given" title="Given 06:05 JS">✓</div></td>
+              <td><div class="mar-cell" title="Not due">—</div></td>
+              <td><div class="mar-cell">—</div></td><td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td><td><div class="mar-cell">—</div></td>
+              <td><button class="btn btn-secondary btn-sm" onclick="showToast('Drug Info','Atenolol: Check apical pulse >60 before giving.','info')">ℹ️</button></td>
+            </tr>
+            <tr>
+              <td><strong>Metformin</strong><br><span class="text-muted" style="font-size:11px">Biguanide</span></td>
+              <td>500 mg PO</td><td>BID</td><td>Type 2 DM</td>
+              <td><div class="mar-cell given">✓</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell due" onclick="adminMed(this,'Metformin 500mg')" title="Due — tap to administer">🕐</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell due" onclick="adminMed(this,'Metformin 500mg')" title="Due">🕐</div></td>
+              <td><button class="btn btn-secondary btn-sm" onclick="showToast('Drug Info','Metformin: Verify BGL before admin. Hold if NPO.','info')">ℹ️</button></td>
+            </tr>
+            <tr>
+              <td><strong>Amlodipine</strong><br><span class="text-muted" style="font-size:11px">CCB</span></td>
+              <td>10 mg PO</td><td>Once Daily</td><td>HTN</td>
+              <td><div class="mar-cell given">✓</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><button class="btn btn-secondary btn-sm" onclick="showToast('Drug Info','Amlodipine: Monitor for peripheral edema.','info')">ℹ️</button></td>
+            </tr>
+            <tr>
+              <td><strong>Atorvastatin</strong><br><span class="text-muted" style="font-size:11px">Statin</span></td>
+              <td>40 mg PO</td><td>Once at Night</td><td>Hyperlipidemia</td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell due" onclick="adminMed(this,'Atorvastatin 40mg')" title="Due at 22:00">🕐</div></td>
+              <td><button class="btn btn-secondary btn-sm" onclick="showToast('Drug Info','Atorvastatin: Give at bedtime. Monitor LFTs.','info')">ℹ️</button></td>
+            </tr>
+            <tr>
+              <td><strong>Nitroglycerin</strong><br><span class="text-muted" style="font-size:11px">Nitrate</span></td>
+              <td>0.4 mg SL</td><td>PRN Chest Pain</td><td>Angina</td>
+              <td><div class="mar-cell given">✓</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><div class="mar-cell">—</div></td>
+              <td><button class="btn btn-danger btn-sm" onclick="showToast('PRN Admin','Record BP before & after NTG. Max 3 doses.','warn')">PRN 🚨</button></td>
+            </tr>
+            <tr>
+              <td><strong>NS 0.9%</strong><br><span class="text-muted" style="font-size:11px">IV Fluid</span></td>
+              <td>125 mL/hr IV</td><td>Continuous</td><td>Hydration</td>
+              <td colspan="6"><div style="display:flex;align-items:center;gap:8px;margin-top:4px;"><div style="flex:1;height:10px;background:rgba(255,255,255,0.08);border-radius:5px;overflow:hidden;"><div style="width:68%;height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:5px;"></div></div><span class="mono" style="font-size:11px;color:var(--text-muted);">850 mL / 1250 mL running</span></div></td>
+              <td><button class="btn btn-secondary btn-sm">📋 Rate</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MAR LOG -->
+      <div class="card">
+        <div class="card-title">📝 Administration Log</div>
+        <table id="marLog">
+          <thead>
+            <tr><th>Time</th><th>Medication</th><th>Dose</th><th>Route</th><th>Site</th><th>Nurse</th><th>Verified By</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">06:05</td><td>Atenolol</td><td>50 mg</td><td>PO</td><td>—</td><td>JS</td><td>MR</td><td>Pulse 108 pre-admin</td></tr>
+            <tr><td class="mono">06:08</td><td>Metformin</td><td>500 mg</td><td>PO</td><td>—</td><td>JS</td><td>MR</td><td>BGL 204 mg/dL</td></tr>
+            <tr><td class="mono">06:10</td><td>Amlodipine</td><td>10 mg</td><td>PO</td><td>—</td><td>JS</td><td>MR</td><td>Given with AM meds</td></tr>
+            <tr><td class="mono">07:30</td><td>Nitroglycerin</td><td>0.4 mg</td><td>SL</td><td>Sublingual</td><td>JS</td><td>MR</td><td>BP 152/94, chest pain 8/10</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════ CARE PLAN ═══════════ -->
+    <div id="tab-careplan" class="tab-content">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Nursing <span>Care Plan</span></div>
+          <div class="page-sub">NANDA-I Diagnoses & Interventions · Santos, Maria</div>
+        </div>
+        <div class="flex gap-8">
+          <button class="btn btn-secondary btn-sm" onclick="addDx()">＋ Add Diagnosis</button>
+          <button class="btn btn-primary btn-sm" onclick="showToast('Care Plan Saved','All nursing diagnoses updated.','success')">💾 Save Plan</button>
+        </div>
+      </div>
+
+      <div id="carePlanContainer">
+
+        <div class="nanda-card priority-high">
+          <div class="flex-between mb-8">
+            <div class="flex gap-8">
+              <span class="tag tag-rose">Priority 1 — High</span>
+              <span class="tag tag-blue">Active</span>
+            </div>
+            <div class="flex gap-8">
+              <button class="btn btn-secondary btn-sm">✏️ Edit</button>
+              <button class="btn btn-danger btn-sm">🗑</button>
+            </div>
+          </div>
+          <div class="nanda-dx">Acute Pain related to myocardial ischemia / ACS protocol</div>
+          <div class="nanda-related">As evidenced by: patient-reported chest pain 7/10, diaphoresis, tachycardia (HR 102), guarding behavior</div>
+          <div style="margin-bottom:10px;">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;font-family:var(--font-mono);">Expected Outcomes (within 4 hrs)</div>
+            <ul class="intervention-list">
+              <li>Patient reports pain ≤3/10 on numeric rating scale</li>
+              <li>Heart rate returns to 60–100 bpm range</li>
+              <li>Patient demonstrates calm demeanor and reduced diaphoresis</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;font-family:var(--font-mono);">Nursing Interventions</div>
+            <ul class="intervention-list">
+              <li>Administer NTG SL 0.4 mg PRN per order; repeat q5 min × 3 if needed</li>
+              <li>Monitor 12-lead ECG continuously; report ST changes to MD immediately</li>
+              <li>Position patient in Semi-Fowler's (30–45°) for comfort and cardiac workload reduction</li>
+              <li>Assess pain using NRS every 30 minutes and with each PRN medication</li>
+              <li>Provide emotional support; minimize environmental stimuli and noise</li>
+              <li>Establish two large-bore IV accesses; maintain patent IV sites</li>
+            </ul>
+          </div>
+          <div style="margin-top:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:12px;color:var(--text-muted);">Outcome Progress</span>
+              <span class="mono" style="font-size:12px;color:var(--amber);">Partially Met — Ongoing</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:45%;background:linear-gradient(90deg,var(--amber),var(--teal));"></div></div>
+          </div>
+        </div>
+
+        <div class="nanda-card priority-high">
+          <div class="flex-between mb-8">
+            <div class="flex gap-8">
+              <span class="tag tag-rose">Priority 2 — High</span>
+              <span class="tag tag-blue">Active</span>
+            </div>
+            <div class="flex gap-8">
+              <button class="btn btn-secondary btn-sm">✏️ Edit</button>
+              <button class="btn btn-danger btn-sm">🗑</button>
+            </div>
+          </div>
+          <div class="nanda-dx">Decreased Cardiac Output related to altered heart rate/rhythm</div>
+          <div class="nanda-related">As evidenced by: tachycardia (HR 102), elevated BP 148/92, diaphoresis, chest pain</div>
+          <ul class="intervention-list">
+            <li>Monitor VS and rhythm q1h; report HR &gt;110 or BP &gt;160/100 immediately</li>
+            <li>Administer Atenolol 50 mg PO per order; monitor apical pulse pre-dose</li>
+            <li>Limit patient activity; encourage bedrest; assist with ADLs</li>
+            <li>Maintain O₂ saturation ≥95%; apply supplemental O₂ per order if needed</li>
+            <li>Restrict sodium intake; maintain fluid restriction if ordered</li>
+          </ul>
+          <div style="margin-top:12px;">
+            <div class="progress-bar"><div class="progress-fill" style="width:35%;background:linear-gradient(90deg,var(--rose),var(--amber));"></div></div>
+          </div>
+        </div>
+
+        <div class="nanda-card priority-medium">
+          <div class="flex-between mb-8">
+            <div class="flex gap-8">
+              <span class="tag tag-amber">Priority 3 — Medium</span>
+              <span class="tag tag-blue">Active</span>
+            </div>
+            <div class="flex gap-8">
+              <button class="btn btn-secondary btn-sm">✏️ Edit</button>
+              <button class="btn btn-danger btn-sm">🗑</button>
+            </div>
+          </div>
+          <div class="nanda-dx">Deficient Knowledge related to new cardiac diagnosis and medication regimen</div>
+          <div class="nanda-related">As evidenced by: patient verbalized confusion about medications, anxiety about prognosis</div>
+          <ul class="intervention-list">
+            <li>Provide teach-back education on ACS, medications, and lifestyle modifications</li>
+            <li>Use plain language and visual aids; involve family/husband in teaching</li>
+            <li>Distribute written materials on cardiac diet and activity guidelines</li>
+            <li>Refer to cardiac rehabilitation program upon discharge</li>
+          </ul>
+          <div style="margin-top:12px;">
+            <div class="progress-bar"><div class="progress-fill" style="width:20%;background:var(--teal);"></div></div>
+          </div>
+        </div>
+
+        <div class="nanda-card priority-low">
+          <div class="flex-between mb-8">
+            <div class="flex gap-8">
+              <span class="tag tag-teal">Priority 4 — Low</span>
+              <span class="tag tag-amber">Monitoring</span>
+            </div>
+            <div class="flex gap-8">
+              <button class="btn btn-secondary btn-sm">✏️ Edit</button>
+              <button class="btn btn-danger btn-sm">🗑</button>
+            </div>
+          </div>
+          <div class="nanda-dx">Anxiety related to hospitalization and uncertain diagnosis</div>
+          <div class="nanda-related">As evidenced by: restlessness, frequent questions, diaphoresis, tachycardia</div>
+          <ul class="intervention-list">
+            <li>Explain all procedures to reduce fear of the unknown</li>
+            <li>Encourage therapeutic communication; use active listening</li>
+            <li>Allow family presence at bedside to provide emotional support</li>
+            <li>Teach deep breathing and relaxation techniques</li>
+          </ul>
+          <div style="margin-top:12px;">
+            <div class="progress-bar"><div class="progress-fill" style="width:55%;background:var(--teal);"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════ AI SCRIBE ═══════════ -->
+    <div id="tab-scribe" class="tab-content">
+      <div class="page-header">
+        <div>
+          <div class="page-title">🎙️ AI <span>Scribe</span></div>
+          <div class="page-sub">Voice-to-Charting · Hands-Free Documentation · NovaCare Unique Feature</div>
+        </div>
+        <span class="tag tag-teal">✨ Future-Ready</span>
+      </div>
+
+      <!-- HOW IT WORKS -->
+      <div class="grid-3 mb-16">
+        <div class="stat-tile">
+          <div class="stat-icon teal">🎙️</div>
+          <div>
+            <div class="stat-label">Step 1</div>
+            <div style="font-size:13px;font-weight:600;">Speak Naturally</div>
+            <div style="font-size:12px;color:var(--text-muted);">Describe assessment in your own words</div>
+          </div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-icon blue">🧠</div>
+          <div>
+            <div class="stat-label">Step 2</div>
+            <div style="font-size:13px;font-weight:600;">AI Processes</div>
+            <div style="font-size:12px;color:var(--text-muted);">NLP extracts clinical data in real-time</div>
+          </div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-icon green">📋</div>
+          <div>
+            <div class="stat-label">Step 3</div>
+            <div style="font-size:13px;font-weight:600;">Auto-Charted</div>
+            <div style="font-size:12px;color:var(--text-muted);">Data populates flowsheet & notes</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="scribe-hero">
+            <div style="font-family:var(--font-head);font-size:13px;color:var(--text-muted);margin-bottom:16px;font-weight:600;letter-spacing:1px;text-transform:uppercase;">Voice Recording</div>
+            <button class="record-btn" id="recordBtn" onclick="toggleRecording()">🎤</button>
+            <div class="scribe-status" id="scribeStatus">Tap microphone to begin recording</div>
+            <div id="scribeTimer" class="mono" style="font-size:13px;color:var(--teal);margin-top:4px;display:none;">⏱ 00:00</div>
+
+            <hr class="divider">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;text-align:left;font-family:var(--font-mono);">TRANSCRIPTION OUTPUT</div>
+            <div class="transcription-area" id="transcriptionArea">
+              <span id="transcriptText" style="color:var(--text-muted);">Your speech will appear here in real time...</span><span class="typed-cursor" id="typedCursor" style="display:none;"></span>
+            </div>
+          </div>
+
+          <!-- DEMO PROMPTS -->
+          <div class="card">
+            <div class="card-title">💡 Demo Scripts</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">Click a script to simulate AI transcription:</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <button class="btn btn-secondary" onclick="demoScript(0)">🫀 Cardiac Assessment</button>
+              <button class="btn btn-secondary" onclick="demoScript(1)">🌡️ Vital Signs Report</button>
+              <button class="btn btn-secondary" onclick="demoScript(2)">💊 Medication Administration</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <!-- AI PARSED OUTPUT -->
+          <div class="card" id="aiOutputCard" style="display:none;">
+            <div class="card-title">🤖 AI-Structured Chart Data</div>
+            <div class="ai-parsed-card" id="aiParsedContent">
+              <div class="ai-label">✓ Auto-Extracted Clinical Data</div>
+              <div id="aiFields"></div>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px;">
+              <button class="btn btn-primary" onclick="acceptAI()">✅ Accept & Auto-Fill Chart</button>
+              <button class="btn btn-secondary" onclick="document.getElementById('aiOutputCard').style.display='none'">✏️ Edit First</button>
+            </div>
+          </div>
+
+          <!-- PREVIOUS SCRIBE ENTRIES -->
+          <div class="card">
+            <div class="card-title">📚 Scribe History — Today</div>
+            <div style="font-size:13px;line-height:1.8;color:var(--text-dim);">
+              <div class="info-row">
+                <span class="key mono">07:05</span>
+                <span class="val">"Patient arrived alert and oriented, diaphoretic, c/o chest pain 8 out of 10, substernal..."</span>
+              </div>
+              <div class="info-row">
+                <span class="key mono">07:30</span>
+                <span class="val">"Administered nitroglycerin sublingual point four milligrams, BP checked at 152 over 94..."</span>
+              </div>
+              <div class="info-row">
+                <span class="key mono">09:00</span>
+                <span class="val">"Morning assessment complete. Lung sounds clear bilaterally. Heart rate 102, still tachycardic..."</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACCURACY STATS -->
+          <div class="card">
+            <div class="card-title">📊 Session Stats</div>
+            <div class="grid-2" style="gap:12px;">
+              <div style="text-align:center;padding:12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
+                <div style="font-family:var(--font-mono);font-size:24px;color:var(--teal);">98.2%</div>
+                <div style="font-size:11px;color:var(--text-muted);">Transcription Accuracy</div>
+              </div>
+              <div style="text-align:center;padding:12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
+                <div style="font-family:var(--font-mono);font-size:24px;color:var(--green);">3</div>
+                <div style="font-size:11px;color:var(--text-muted);">Notes Recorded Today</div>
+              </div>
+              <div style="text-align:center;padding:12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
+                <div style="font-family:var(--font-mono);font-size:24px;color:var(--blue);">~18 min</div>
+                <div style="font-size:11px;color:var(--text-muted);">Documentation Time Saved</div>
+              </div>
+              <div style="text-align:center;padding:12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
+                <div style="font-family:var(--font-mono);font-size:24px;color:var(--amber);">12</div>
+                <div style="font-size:11px;color:var(--text-muted);">Fields Auto-Populated</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ─── TOAST CONTAINER ────────────────────────────── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ─── BURNOUT MODAL ──────────────────────────────── -->
+<div class="modal-overlay" id="burnoutModal">
+  <div class="modal">
+    <div class="modal-icon">🌿</div>
+    <div class="modal-title">Wellness Check-In</div>
+    <div class="modal-body">
+      Your workload is at <strong>62%</strong> — you're doing great!<br><br>
+      You've been on your feet for <strong>4.5 hours</strong>. Remember to take a 10-minute break when your next colleague relieves you. Hydration reminder: Have you had water in the last hour?
+      <div style="margin-top:16px;background:var(--surface);border-radius:8px;padding:12px;font-size:13px;text-align:left;">
+        <div class="flex-between mb-8">
+          <span style="color:var(--text-muted);">Current Workload</span>
+          <span class="text-amber">62% — Moderate</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:62%;background:linear-gradient(90deg,var(--green),var(--amber));"></div></div>
+        <div style="margin-top:10px;color:var(--text-muted);font-size:12px;">
+          🩺 Patients: 4 active<br>
+          📋 Pending tasks: 3<br>
+          ⏱ Hours on shift: 4.5 / 8
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;">
+      <button class="btn btn-primary" onclick="closeBurnout()">✅ I'm Doing Fine</button>
+      <button class="btn btn-secondary" onclick="closeBurnout()">📞 Request Support</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── CLOCK ────────────────────────────────────────
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent =
+      now.toLocaleTimeString('en-PH', { hour12: false });
+  }
+  updateClock(); setInterval(updateClock, 1000);
+
+  // Default time input
+  document.getElementById('vsTime').value =
+    new Date().toTimeString().slice(0,5);
+
+  // ─── NAV ──────────────────────────────────────────
+  function showTab(name, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ─── PATIENT SELECT ───────────────────────────────
+  function selectPatient(el, name, meta, cc) {
+    document.querySelectorAll('.patient-card-mini').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    showToast('Patient Loaded', name + ' · ' + cc, 'info');
+  }
+
+  // ─── ASSESSMENT TOGGLE ────────────────────────────
+  function toggleAssess(header) {
+    header.classList.toggle('open');
+    header.nextElementSibling.classList.toggle('open');
+  }
+
+  // ─── VITALS CHECK ─────────────────────────────────
+  const vitalRanges = {
+    hr: [60,100], sbp: [90,120], dbp: [60,80],
+    temp: [36.1,37.2], spo2: [95,100], sug: [70,140]
+  };
+
+  function checkVital(input, key) {
+    const card = document.getElementById('vc-' + key);
+    if (!card) return;
+    const val = parseFloat(input.value);
+    const [lo, hi] = vitalRanges[key];
+    if (val < lo || val > hi) {
+      card.classList.add('abnormal');
+      showToast('⚠ Abnormal Value', key.toUpperCase() + ': ' + val + ' (Normal: ' + lo + '–' + hi + ')', 'warn');
+    } else {
+      card.classList.remove('abnormal');
+    }
+  }
+
+  // ─── SAVE VITALS ──────────────────────────────────
+  function saveVitals() {
+    const hr = document.getElementById('v-hr').value;
+    const sbp = document.getElementById('v-sbp').value;
+    const dbp = document.getElementById('v-dbp').value;
+    const temp = document.getElementById('v-temp').value;
+    const spo2 = document.getElementById('v-spo2').value;
+    const rr = document.getElementById('v-rr').value;
+    const pain = document.getElementById('v-pain').value;
+    const gcs = document.getElementById('v-gcs').value;
+    const sug = document.getElementById('v-sug').value;
+    const time = document.getElementById('vsTime').value;
+    const tbody = document.querySelector('#vitalsTable tbody');
+    const row = document.createElement('tr');
+    const hrTag = (hr < 60 || hr > 100) ?
+      `<span class="tag tag-rose">${hr}</span>` :
+      `<span class="tag tag-green">${hr}</span>`;
+    row.innerHTML = `
+      <td class="mono">${time}</td><td>${hrTag}</td><td>${sbp}/${dbp}</td>
+      <td>${temp}</td><td>${spo2}%</td><td>${rr}</td><td>${pain}</td>
+      <td>${gcs}</td><td>${sug}</td><td>JS</td>`;
+    tbody.appendChild(row);
+    showToast('Vitals Recorded', 'Entry saved at ' + time, 'success');
+  }
+
+  // ─── MAR ADMIN ────────────────────────────────────
+  function adminMed(cell, name) {
+    cell.classList.remove('due');
+    cell.classList.add('given');
+    cell.textContent = '✓';
+    const tbody = document.querySelector('#marLog tbody');
+    const now = new Date().toTimeString().slice(0,5);
+    const row = document.createElement('tr');
+    row.innerHTML = `<td class="mono">${now}</td><td>${name.split(' ')[0]}</td>
+      <td>${name.split(' ').slice(1).join(' ')}</td><td>PO</td><td>—</td><td>JS</td><td>—</td><td>Administered per schedule</td>`;
+    tbody.appendChild(row);
+    showToast('✅ Medication Given', name + ' administered at ' + now, 'success');
+  }
+
+  // ─── ADD DX ───────────────────────────────────────
+  function addDx() {
+    const dx = prompt('Enter nursing diagnosis (NANDA):');
+    if (!dx) return;
+    const div = document.createElement('div');
+    div.className = 'nanda-card priority-medium';
+    div.innerHTML = `
+      <div class="flex-between mb-8">
+        <div class="flex gap-8"><span class="tag tag-amber">New</span><span class="tag tag-blue">Active</span></div>
+        <button class="btn btn-danger btn-sm" onclick="this.closest('.nanda-card').remove()">🗑</button>
+      </div>
+      <div class="nanda-dx">${dx}</div>
+      <div class="nanda-related" contenteditable="true" style="outline:none;border-bottom:1px dashed var(--border);padding-bottom:4px;">Click to add related factors / evidence...</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);">Add interventions below:</div>
+      <textarea style="margin-top:6px;" placeholder="Enter nursing interventions..."></textarea>
+      <div style="margin-top:10px;"><div class="progress-bar"><div class="progress-fill" style="width:5%;background:var(--teal);"></div></div></div>`;
+    document.getElementById('carePlanContainer').appendChild(div);
+    showToast('Dx Added', 'New nursing diagnosis created.', 'success');
+  }
+
+  // ─── TOAST ────────────────────────────────────────
+  function showToast(title, body, type = 'info') {
+    const cont = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast toast-${type}`;
+    t.innerHTML = `<div class="toast-title">${title}</div><div class="toast-body">${body}</div>`;
+    cont.appendChild(t);
+    setTimeout(() => t.style.opacity = '0', 3000);
+    setTimeout(() => t.remove(), 3500);
+  }
+
+  // ─── BURNOUT ──────────────────────────────────────
+  function openBurnout() { document.getElementById('burnoutModal').classList.add('open'); }
+  function closeBurnout() { document.getElementById('burnoutModal').classList.remove('open'); }
+
+  // ─── AI SCRIBE ────────────────────────────────────
+  let isRecording = false;
+  let timerInterval = null;
+  let seconds = 0;
+  let typingInterval = null;
+
+  const demoScripts = [
+    {
+      text: "Patient Maria Santos, room 401. Cardiac assessment performed at nine hundred hours. Heart rate one hundred and two beats per minute, tachycardic. Blood pressure one forty eight over ninety two. Patient reports chest pain at seven out of ten, substernal, radiating to left arm. Skin diaphoretic and pale. S1 and S2 heart sounds regular. IV line patent right antecubital. Doctor Villanueva notified.",
+      fields: [
+        { key: "Patient", val: "Santos, Maria · Rm 401" },
+        { key: "Assessment Time", val: "09:00" },
+        { key: "Heart Rate", val: "102 bpm (Tachycardic)" },
+        { key: "Blood Pressure", val: "148/92 mmHg" },
+        { key: "Pain Score", val: "7/10 — substernal, radiating to L arm" },
+        { key: "Skin Assessment", val: "Diaphoretic, pallor noted" },
+        { key: "Heart Sounds", val: "S1/S2 Regular" },
+        { key: "IV Access", val: "PIV intact — R antecubital" },
+        { key: "MD Notified", val: "Dr. R. Villanueva ✓" }
+      ]
+    },
+    {
+      text: "Vital signs recorded. Temperature thirty seven point one degrees Celsius. Blood pressure one forty eight over ninety two. Pulse one hundred and two. Respiratory rate eighteen breaths per minute. Oxygen saturation ninety seven percent on room air. Blood glucose one eighty eight milligrams per deciliter. Pain score seven. Glasgow Coma Scale fifteen. Patient alert and oriented.",
+      fields: [
+        { key: "Temperature", val: "37.1 °C (Normal)" },
+        { key: "Blood Pressure", val: "148/92 mmHg (High)" },
+        { key: "Heart Rate", val: "102 bpm (Elevated)" },
+        { key: "Respiratory Rate", val: "18 br/min (Normal)" },
+        { key: "SpO₂", val: "97% on Room Air" },
+        { key: "Blood Glucose", val: "188 mg/dL (Elevated)" },
+        { key: "Pain Score", val: "7/10" },
+        { key: "GCS", val: "15 (Alert)" }
+      ]
+    },
+    {
+      text: "Medication administration note. Nitroglycerin sublingual zero point four milligrams given at zero seven thirty for chest pain complaint. Blood pressure before administration one fifty two over ninety four. Patient positioned upright. Reminded patient to allow tablet to dissolve. Pain reassessment in five minutes. Doctor Villanueva aware.",
+      fields: [
+        { key: "Medication", val: "Nitroglycerin 0.4 mg SL" },
+        { key: "Time Given", val: "07:30" },
+        { key: "Indication", val: "Chest pain PRN" },
+        { key: "Pre-Admin BP", val: "152/94 mmHg" },
+        { key: "Route", val: "Sublingual" },
+        { key: "Patient Position", val: "Upright / Semi-Fowler's" },
+        { key: "MD Notified", val: "Dr. R. Villanueva ✓" },
+        { key: "Follow-up", val: "Pain reassessment at 07:35" }
+      ]
+    }
+  ];
+
+  function toggleRecording() {
+    if (isRecording) stopRecording();
+    else startRecording();
+  }
+
+  function startRecording() {
+    isRecording = true;
+    document.getElementById('recordBtn').classList.add('recording');
+    document.getElementById('recordBtn').textContent = '⏹';
+    document.getElementById('scribeStatus').textContent = 'Recording... speak now';
+    document.getElementById('scribeStatus').classList.add('active');
+    document.getElementById('scribeTimer').style.display = 'block';
+    document.getElementById('transcriptText').textContent = '';
+    document.getElementById('transcriptText').style.color = 'var(--text)';
+    document.getElementById('typedCursor').style.display = 'inline-block';
+    seconds = 0;
+    timerInterval = setInterval(() => {
+      seconds++;
+      const m = Math.floor(seconds/60).toString().padStart(2,'0');
+      const s = (seconds%60).toString().padStart(2,'0');
+      document.getElementById('scribeTimer').textContent = '⏱ ' + m + ':' + s;
+    }, 1000);
+    showToast('🎙️ Recording Started', 'Speak clearly for best results.', 'info');
+  }
+
+  function stopRecording() {
+    isRecording = false;
+    clearInterval(timerInterval);
+    document.getElementById('recordBtn').classList.remove('recording');
+    document.getElementById('recordBtn').textContent = '🎤';
+    document.getElementById('scribeStatus').textContent = 'Processing audio...';
+    document.getElementById('scribeStatus').classList.remove('active');
+    setTimeout(() => {
+      document.getElementById('scribeStatus').textContent = 'Tap microphone to begin recording';
+      document.getElementById('typedCursor').style.display = 'none';
+    }, 2000);
+    showToast('⏹ Recording Stopped', 'Use demo scripts to simulate AI transcription.', 'info');
+  }
+
+  function demoScript(idx) {
+    const script = demoScripts[idx];
+    const textEl = document.getElementById('transcriptText');
+    const cursorEl = document.getElementById('typedCursor');
+    document.getElementById('aiOutputCard').style.display = 'none';
+
+    // Reset
+    textEl.textContent = '';
+    textEl.style.color = 'var(--text)';
+    cursorEl.style.display = 'inline-block';
+
+    // Simulate recording
+    document.getElementById('recordBtn').classList.add('recording');
+    document.getElementById('recordBtn').textContent = '⏹';
+    document.getElementById('scribeStatus').textContent = '● Recording in progress...';
+    document.getElementById('scribeStatus').classList.add('active');
+    document.getElementById('scribeTimer').style.display = 'block';
+
+    let i = 0;
+    const words = script.text.split(' ');
+    let wordIdx = 0;
+
+    if (typingInterval) clearInterval(typingInterval);
+
+    typingInterval = setInterval(() => {
+      if (wordIdx < words.length) {
+        textEl.textContent += (wordIdx > 0 ? ' ' : '') + words[wordIdx];
+        wordIdx++;
+        // Simulate seconds
+        seconds = wordIdx * 0.3;
+        const m = Math.floor(seconds/60).toString().padStart(2,'0');
+        const s = Math.floor(seconds%60).toString().padStart(2,'0');
+        document.getElementById('scribeTimer').textContent = '⏱ ' + m + ':' + s;
+      } else {
+        clearInterval(typingInterval);
+        // Stop recording, show AI output
+        document.getElementById('recordBtn').classList.remove('recording');
+        document.getElementById('recordBtn').textContent = '🎤';
+        document.getElementById('scribeStatus').textContent = '🧠 AI processing...';
+        setTimeout(() => {
+          document.getElementById('scribeStatus').textContent = '✅ Transcription complete';
+          document.getElementById('scribeStatus').classList.remove('active');
+          cursorEl.style.display = 'none';
+          // Show AI parsed output
+          const fieldsDiv = document.getElementById('aiFields');
+          fieldsDiv.innerHTML = '';
+          script.fields.forEach(f => {
+            fieldsDiv.innerHTML += `<div class="ai-field"><span class="key">${f.key}</span><span class="val">${f.val}</span></div>`;
+          });
+          document.getElementById('aiOutputCard').style.display = 'block';
+          showToast('🤖 AI Analysis Complete', script.fields.length + ' fields extracted automatically.', 'success');
+        }, 800);
+      }
+    }, 55);
+  }
+
+  function acceptAI() {
+    document.getElementById('aiOutputCard').style.display = 'none';
+    showToast('✅ Chart Updated!', 'AI-extracted data has been auto-filled into the flowsheet and notes.', 'success');
+  }
+
+  // ─── BURNOUT ANIMATION ───────────────────────────
+  let burnoutVal = 62;
+  setInterval(() => {
+    burnoutVal += (Math.random() - 0.45) * 3;
+    burnoutVal = Math.max(20, Math.min(95, burnoutVal));
+    document.getElementById('burnoutBar').style.width = burnoutVal.toFixed(0) + '%';
+    document.getElementById('burnoutPct').textContent = burnoutVal.toFixed(0) + '%';
+    if (burnoutVal > 80) {
+      document.getElementById('burnoutBar').style.background = 'linear-gradient(90deg, var(--amber), var(--rose))';
+    } else {
+      document.getElementById('burnoutBar').style.background = 'linear-gradient(90deg, var(--green), var(--amber))';
+    }
+  }, 8000);
+
+  // Initial toast
+  setTimeout(() => showToast('👋 Welcome, RN Santos!', 'Day shift started. 4 patients assigned.', 'info'), 800);
+  setTimeout(() => showToast('💊 Medication Due', 'Metformin 500mg due for Santos, Maria at 12:00', 'warn'), 2500);
+</script>
+</body>
+</html>
